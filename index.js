@@ -1,6 +1,9 @@
 //modulos requeridos en el proyecto
 const mongoose = require('mongoose')
 const express = require('express')
+require('dotenv').config()
+
+const DB_URL = process.env.DB_URL || '';
 
 //Configuracion de express
 const app = express()
@@ -8,7 +11,7 @@ const router = express.Router()
 const port = 3000
 
 //Conexion a la base de datos
-mongoose.connect("mongodb+srv://kevinshe01:kevinykevin1@casas.yojdwum.mongodb.net/casas")
+mongoose.connect(DB_URL)
 
 //Midleware
 app.use(express.urlencoded({extended: true}))
