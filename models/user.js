@@ -1,18 +1,38 @@
 const mongoose = require("mongoose");
 
 let UserSchema = new mongoose.Schema({
-    id: Number,
-    name: {
-        type:String, 
-        require:true
+    "id": {
+        type: Number,
+        require: true,
+        unique: true
     },
-    lastname: String,
-    email: {
-        type:String, 
-        require:true
+    "name": {
+        type: String, 
+        require: true
     },
-    password: String,
-    rol: String    
+    "lastname": {
+        type: String, 
+        require: true
+    },
+    "email": {
+        type: String, 
+        require: true,
+        unique: true,
+        validate:{
+            validator: function(v){
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+            },
+            message: "el email no es valido"
+        }
+    },
+    "password": {
+        type: String, 
+        require: true
+    },
+    "rol": {
+        type: String, 
+        default: "usuario"
+    },    
 })
 
-module.exports = mongoose.model('user', UserSchema)
+module.exports = mongoose.model('User', UserSchema)
