@@ -32,7 +32,10 @@ let UserSchema = new mongoose.Schema({
     "rol": {
         type: String, 
         default: "usuario"
-    },    
+    },
+    "avatar": {
+        type: String
+    } 
 })
 
 module.exports = mongoose.model('User', UserSchema)
