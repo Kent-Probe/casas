@@ -1,31 +1,39 @@
 const HouseSchema = require("../models/Houses.js");
 const jwt = require("jsonwebtoken");
+import('node-fetch').then(module => {
+    const fetch = module.default;
+    // Ahora puedes usar la función fetch aquí
+  }).catch(error => {
+    console.error('Error al importar node-fetch:', error);
+  });
 
-require('dotenv').config()
+require("dotenv").config();
 
-const SECRET = process.env.JWT_SECRET
+const SECRET = process.env.JWT_SECRET;
 
 class HouseController {
     constructor() {}
 
-    validateToken(req, res, next){
-        const bearerToken = req.headers['authorization']
-        if(!bearerToken){
+    validateToken(req, res, next) {
+        const bearerToken = req.headers["authorization"];
+        if (!bearerToken) {
             return res.status(401).json({
-                message: "Not authorizated"
-            })
+                message: "Not authorizated",
+            });
         }
 
-        const token = bearerToken.startsWith("Bearer ")? bearerToken.slice(7) : bearerToken;
+        const token = bearerToken.startsWith("Bearer ")
+            ? bearerToken.slice(7)
+            : bearerToken;
         jwt.verify(token, SECRET, (err, decoded) => {
-            if(err){
+            if (err) {
                 return res.status(401).json({
-                    message: "Not authorizated"
-                })
+                    message: "Not authorizated",
+                });
             }
             req.houseId = decoded.houseId;
             next();
-        })
+        });
     }
 
     //Obtener todos los usuarios
@@ -81,7 +89,7 @@ class HouseController {
             rooms: req.body.rooms,
             bathrooms: req.body.bathrooms,
             parking: req.body.parking,
-            price: req.body.price
+            price: req.body.price,
         };
 
         //Opciones de la actualizacion
@@ -136,10 +144,45 @@ class HouseController {
     //Registrar un usuario
     static houseInsert = async (req, res) => {
         try {
+            let departmentId
+
+            const departamentBody = req.body.state.toUpperCase();
+            const cityBody = req.body.city.toUpperCase();
+
+            let cityApi = await fetch("https://api-colombia.com/api/v1/city");
+            let responseCity = await cityApi.json();
+            const response = responseCity.some((city) => {
+                if (city.name.toUpperCase() == cityBody) {
+                    departmentId = city.departmentId
+                    return true;
+                }else return false;
+            })
+
+            if(response){
+                let departamentApi = await fetch("https://api-colombia.com/api/v1/department")
+                let responseDepartaments = await departamentApi.json();
+                const responseDepartament = responseDepartaments.some((departament) => {
+                    if (departament.id == departmentId && departament.name.toUpperCase() == departamentBody) {
+                        return true;
+                    }else return false;
+                })
+                if(!responseDepartament){
+                    return res.status(400).json({
+                        status: "failed",
+                        message: "Error, departament not found",
+                    });
+                }
+            }else{
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Error, city not found",
+                });
+            }
 
             let house = HouseSchema(req.body);
 
-            house.save()
+            house
+                .save()
                 .then(() => {
                     res.json({
                         status: "success",
@@ -160,7 +203,7 @@ class HouseController {
                     }
                 });
         } catch (err) {
-            console.log(err)
+            console.log(err);
             res.status(500).json({
                 status: "failed",
                 message: "missing argument",

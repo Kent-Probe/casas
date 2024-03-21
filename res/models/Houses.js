@@ -11,7 +11,7 @@ let HouseSchema = new mongoose.Schema({
     },
     "state": {
         type: String, 
-        require: true
+        require: true,
     },
     "size": {
         type: Number, 
