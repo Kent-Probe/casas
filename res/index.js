@@ -27,6 +27,7 @@ const userRouters = require("./routers/UserRouters");
 const houseRouters = require("./routers/HouseRouters");
 const chatRouters = require("./routers/ChatsRouters");
 const MessageSchema = require("./models/Message");
+const readRouters = require("../readFile");
 
 //Midleware
 app.use(express.urlencoded({ extended: true }));
@@ -71,6 +72,7 @@ app.use(router);
 app.use("/", userRouters);
 app.use("/", houseRouters);
 app.use("/", chatRouters);
+app.use("/", readRouters);
 app.use("/res", express.static("res"));
 
 http.listen(port, () => {
