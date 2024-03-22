@@ -1,11 +1,6 @@
 const HouseSchema = require("../models/Houses.js");
 const jwt = require("jsonwebtoken");
-import('node-fetch').then(module => {
-    const fetch = module.default;
-    // Ahora puedes usar la función fetch aquí
-  }).catch(error => {
-    console.error('Error al importar node-fetch:', error);
-  });
+require('node-fetch')
 
 require("dotenv").config();
 

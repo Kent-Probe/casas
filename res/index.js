@@ -57,10 +57,8 @@ app.use((req, res, next) => {
 });
 
 //ruta de test
-app.get("/test", (req, res) => {
-    res.json({
-        message: "Hello World",
-    });
+app.get("/", (req, res) => {
+    res.send('Hello World!');
 });
 
 const yoga = new createYoga({
