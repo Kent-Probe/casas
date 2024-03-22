@@ -2,6 +2,9 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const socket = require("socket.io");
+const { createYoga } = require('graphql-yoga')
+const schema = require('./graphql/Schema')
+
 
 require("dotenv").config();
 
@@ -54,12 +57,16 @@ app.use((req, res, next) => {
 });
 
 //ruta de test
-
 app.get("/test", (req, res) => {
     res.json({
         message: "Hello World",
     });
 });
+
+const yoga = new createYoga({
+    schema: schema
+})
+app.use('/graphql', yoga)
 
 //Rutas usadas en el proyecto
 app.use(router);
@@ -71,3 +78,5 @@ app.use("/res", express.static("res"));
 http.listen(port, () => {
     console.log(`listening at http://localhost:${port}`);
 });
+
+module.exports = http;
